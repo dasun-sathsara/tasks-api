@@ -1,0 +1,42 @@
+{
+  "name": "task-manager",
+  "description": "A REST API for a task managing application",
+  "packageManager": "yarn@3.6.1",
+  "version": "1.0.0",
+  "main": "dist/src/index.js",
+  "typings": "dist/src/index.d.ts",
+  "bin": {
+    "nodejs-typescript-modern-starter": "dist/src/index.js",
+    "ntms": "dist/src/index.js"
+  },
+  "scripts": {
+    "build": "node tasks.mjs build",
+    "bundle": "node tasks.mjs bundle",
+    "clean": "node tasks.mjs clean",
+    "dev": "concurrently \"npm:watch-*\"",
+    "format": "node tasks.mjs format --write",
+    "format-check": "node tasks.mjs format --check",
+    "lint": "node tasks.mjs lint --fix",
+    "lint-check": "node tasks.mjs lint",
+    "start": "node tasks.mjs start",
+    "test": "node tasks.mjs test",
+    "watch-node": "node tasks.mjs watch-node",
+    "watch-ts": "node tasks.mjs watch-ts"
+  },
+  "devDependencies": {
+    "@tsconfig/node20": "^1.0.2",
+    "@types/node": "^20.4.2",
+    "@types/nodemon": "^1.19.2",
+    "@types/shelljs": "^0.8.12",
+    "@typescript-eslint/eslint-plugin": "^6.0.0",
+    "@typescript-eslint/parser": "^6.0.0",
+    "concurrently": "^8.2.0",
+    "esbuild": "^0.18.12",
+    "eslint": "^8.44.0",
+    "eslint-config-prettier": "^8.8.0",
+    "nodemon": "^3.0.1",
+    "prettier": "^3.0.0",
+    "shelljs": "^0.8.5",
+    "typescript": "^5.1.6"
+  }
+}
