@@ -1,0 +1,25 @@
+version: '3'
+
+networks:
+  backend:
+    external: true
+  
+volumes:
+  # bind mounts doesn't work when using linux images in a windows host system
+  mongo-data:
+    driver: local
+
+services:
+  mongodb:
+    image: mongo:jammy
+    environment:
+      # mongo will always load the database in the volume first
+      # for these to take effect, you need to delete the current volume
+      - MONGO_INITDB_ROOT_USERNAME=dasun
+      - MONGO_INITDB_ROOT_PASSWORD=Ds20020618
+    volumes:
+      - mongo-data:/data/db
+    ports:
+      - "27017:27017"
+    networks:
+      - backend
