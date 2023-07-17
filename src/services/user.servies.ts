@@ -1,7 +1,7 @@
-import { AddUserInput } from '../schemas/user.schemas';
+import { AddUserSchema } from '../schemas/user.schemas';
 import { UserModel } from '../models/export';
 
-async function createUser(data: AddUserInput) {
+async function createUser(data: AddUserSchema) {
 	try {
 		const user = await UserModel.create({ ...data });
 		return user;
