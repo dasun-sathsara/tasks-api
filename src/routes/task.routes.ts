@@ -5,22 +5,27 @@ import {
 	findTasksHandler,
 	getTaskByIdHandler,
 	updateTaskHandler,
-} from 'src/controllers/task.controller';
+} from '../controllers/task.controller';
+import { $ref } from '../schemas/task.schemas';
 
 // route: api/tasks
 async function taskRoutes(fastify: FastifyInstance) {
-	fastify.post('/', createTaskHandler);
+	fastify.post('/', { schema: { body: $ref('addTaskSchema') } }, createTaskHandler);
 
 	// GET /tasks?completed=true
 	// GET /tasks?limit=10&skip=20
 	// GET /tasks?sortBy=createdAt:desc
-	fastify.get('/', findTasksHandler);
+	fastify.get('/', { schema: { querystring: $ref('findTaskSchema') } }, findTasksHandler);
 
-	fastify.get('/:id', getTaskByIdHandler);
+	fastify.get('/:id', { schema: { params: $ref('taskIdSchema') } }, getTaskByIdHandler);
 
-	fastify.patch('/:id', updateTaskHandler);
+	fastify.patch(
+		'/:id',
+		{ schema: { body: $ref('updateTaskSchema'), params: $ref('taskIdSchema') } },
+		updateTaskHandler,
+	);
 
-	fastify.delete('/:id', deleteTaskdHandler);
+	fastify.delete('/:id', { schema: { params: $ref('taskIdSchema') } }, deleteTaskdHandler);
 }
 
 export default taskRoutes;
