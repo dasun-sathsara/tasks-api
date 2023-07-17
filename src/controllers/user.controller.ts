@@ -1,9 +1,9 @@
 import { FastifyReply, FastifyRequest } from 'fastify';
-import { AddUserInput } from '../schemas/user.schemas';
+import { AddUserSchema } from '../schemas/user.schemas';
 import { createUser } from '../services/user.servies';
 import { fastify } from '../index';
 
-async function addNewUserHandler(request: FastifyRequest<{ Body: AddUserInput }>, reply: FastifyReply) {
+async function addNewUserHandler(request: FastifyRequest<{ Body: AddUserSchema }>, reply: FastifyReply) {
 	const data = request.body;
 	try {
 		const user = await createUser(data);
@@ -14,4 +14,33 @@ async function addNewUserHandler(request: FastifyRequest<{ Body: AddUserInput }>
 	}
 }
 
-export { addNewUserHandler };
+async function loginHandler(request: FastifyRequest, reply: FastifyReply) {}
+
+async function logoutHandler(request: FastifyRequest, reply: FastifyReply) {}
+
+async function logoutAllHandler(request: FastifyRequest, reply: FastifyReply) {}
+
+async function getUserHandler(request: FastifyRequest, reply: FastifyReply) {}
+
+async function updateUserHandler(request: FastifyRequest, reply: FastifyReply) {}
+
+async function deleteUserHandler(request: FastifyRequest, reply: FastifyReply) {}
+
+async function addAvatarHandler(request: FastifyRequest, reply: FastifyReply) {}
+
+async function getOwnAvatarHandler(request: FastifyRequest, reply: FastifyReply) {}
+
+async function getAvatarHandler(request: FastifyRequest, reply: FastifyReply) {}
+
+export {
+	addNewUserHandler,
+	loginHandler,
+	logoutHandler,
+	logoutAllHandler,
+	getUserHandler,
+	updateUserHandler,
+	deleteUserHandler,
+	addAvatarHandler,
+	getOwnAvatarHandler,
+	getAvatarHandler,
+};
