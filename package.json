@@ -25,9 +25,11 @@
   },
   "devDependencies": {
     "@tsconfig/node20": "^1.0.2",
+    "@types/bcrypt": "^5.0.0",
     "@types/node": "^20.4.2",
     "@types/nodemon": "^1.19.2",
     "@types/shelljs": "^0.8.12",
+    "@types/validator": "^13.7.17",
     "@typescript-eslint/eslint-plugin": "^6.0.0",
     "@typescript-eslint/parser": "^6.0.0",
     "concurrently": "^8.2.0",
@@ -35,8 +37,17 @@
     "eslint": "^8.44.0",
     "eslint-config-prettier": "^8.8.0",
     "nodemon": "^3.0.1",
+    "pino-pretty": "^10.0.1",
     "prettier": "^3.0.0",
     "shelljs": "^0.8.5",
     "typescript": "^5.1.6"
+  },
+  "dependencies": {
+    "@typegoose/typegoose": "^11.3.0",
+    "bcrypt": "^5.1.0",
+    "dotenv": "^16.3.1",
+    "fastify": "^4.19.2",
+    "mongoose": "^7.3.4",
+    "validator": "^13.9.0"
   }
 }

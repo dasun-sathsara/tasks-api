@@ -53,7 +53,7 @@ module.exports = {
                 'no-duplicate-imports': 'error',
                 'no-fallthrough': 'error',
                 'use-isnan': 'error',
-                'arrow-body-style': ['error', 'always'],
+                // 'arrow-body-style': ['error', 'always'],
                 'no-loss-of-precision': 'error',
                 'no-promise-executor-return': 'error',
                 // See "when not to use it", and check your use case, if you think this

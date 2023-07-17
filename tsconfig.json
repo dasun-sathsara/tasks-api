@@ -1,21 +1,24 @@
 {
-  "extends": "@tsconfig/node20/tsconfig.json",
-  "compilerOptions": {
-    "outDir": "dist",
-    "baseUrl": ".",
-    "module": "Node16",
-    "moduleResolution": "Node16",
-    "allowUnusedLabels": false,
-    "allowUnreachableCode": false,
-    "noFallthroughCasesInSwitch": true,
-    "noUncheckedIndexedAccess": true,
-    "noUnusedLocals": true,
-    "noUnusedParameters": true,
-    "forceConsistentCasingInFileNames": true,
-    "declaration": true,
-    "sourceMap": true,
-    "resolveJsonModule": true
-  },
-  "include": ["src", "test", "tasks.mjs", ".eslintrc.cjs"],
-  "exclude": ["dist", "bundle", "node_modules"]
+	"extends": "@tsconfig/node20/tsconfig.json",
+	"compilerOptions": {
+		"outDir": "dist",
+		"baseUrl": ".",
+		"target": "ES6",
+		"module": "Node16",
+		"moduleResolution": "Node16",
+		"allowUnusedLabels": false,
+		"allowUnreachableCode": false,
+		"experimentalDecorators": true,
+		"emitDecoratorMetadata": true,
+		"noFallthroughCasesInSwitch": true,
+		"noUncheckedIndexedAccess": true,
+		"noUnusedLocals": true,
+		"noUnusedParameters": true,
+		"forceConsistentCasingInFileNames": true,
+		"declaration": true,
+		"sourceMap": true,
+		"resolveJsonModule": true
+	},
+	"include": ["src", "test", "tasks.mjs", ".eslintrc.cjs"],
+	"exclude": ["dist", "bundle", "node_modules"]
 }

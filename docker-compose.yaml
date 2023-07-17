@@ -3,9 +3,9 @@ version: '3'
 networks:
   backend:
     external: true
-  
+
 volumes:
-  # bind mounts doesn't work when using linux images in a windows host system
+  # bind mounts (for mongodb) doesn't work when using linux images in a windows host system
   mongo-data:
     driver: local
 
