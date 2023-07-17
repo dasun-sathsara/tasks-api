@@ -2,7 +2,7 @@ import { prop, modelOptions, pre, DocumentType, Ref, ReturnModelType } from '@ty
 import isEmail from 'validator/lib/isEmail';
 import * as bcrypt from 'bcrypt';
 import { Task } from './task.model';
-import { TaskModel } from './export';
+import { TaskModel, UserModel } from './export';
 
 /*
 deleting user's tasks when the user is deleted
@@ -91,8 +91,21 @@ class User {
 		return result;
 	}
 
-	// TODO: implement
-	// public static async findByCredentials(this: ReturnModelType<typeof User>, email: string, password: string) {}
+	public static async findByCredentials(this: ReturnModelType<typeof User>, email: string, password: string) {
+		const user = await UserModel.findOne({ email });
+
+		if (!user) {
+			throw new Error('Authentication failure.');
+		}
+
+		const isMatch = await bcrypt.compare(password, user.password);
+
+		if (!isMatch) {
+			throw new Error('Authentication failure.');
+		}
+
+		return user;
+	}
 }
 
 class Token {
