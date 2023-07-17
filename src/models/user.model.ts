@@ -61,10 +61,9 @@ class User {
 
 	@prop({
 		type: Number,
-		required: true,
 		validate: { validator: (value: number) => value > 0, message: 'Age should be positive' },
 	})
-	public age!: number;
+	public age?: number;
 
 	@prop({ type: () => [Token] })
 	public tokens?: Token[];
@@ -79,19 +78,21 @@ class User {
 	public async generateAuthToken(this: DocumentType<User>) {}
 
 	// the return value of this method will be used in JSON.stringify
-	public toJson(this: DocumentType<User>) {
+	public toJSON(this: DocumentType<User>) {
 		const user = this;
-		const userObject = user.toObject() as Partial<User>;
+		const userObject = user.toObject() as Partial<User> & { _id?: string; id?: string; __v?: string };
 
-		delete userObject.password;
-		delete userObject.tokens;
-		delete userObject.avatar;
+		const { password, tokens, avatar, __v, _id, ...rest } = userObject;
 
-		return userObject;
+		const result = { ...rest };
+
+		result.id = _id;
+
+		return result;
 	}
 
 	// TODO: implement
-	public static async findByCredentials(this: ReturnModelType<typeof User>, email: string, password: string) {}
+	// public static async findByCredentials(this: ReturnModelType<typeof User>, email: string, password: string) {}
 }
 
 class Token {

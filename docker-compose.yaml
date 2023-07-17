@@ -17,6 +17,7 @@ services:
       # for these to take effect, you need to delete the current volume
       - MONGO_INITDB_ROOT_USERNAME=dasun
       - MONGO_INITDB_ROOT_PASSWORD=Ds20020618
+      - MONGO_INITDB_DATABASE=tasks_api
     volumes:
       - mongo-data:/data/db
     ports:
