@@ -3,6 +3,8 @@ import 'dotenv/config';
 import userRoutes from './routes/user.routes';
 import { userSchemas } from './schemas/user.schemas';
 import mongoose from 'mongoose';
+import { taskSchemas } from './schemas/task.schemas';
+import taskRoutes from './routes/task.routes';
 
 const port = process.env.PORT || '3000';
 
@@ -17,11 +19,12 @@ fastify.get('/healthcheck', async () => {
 });
 
 // registering request validation schemas
-for (const schema of [...userSchemas]) {
+for (const schema of [...userSchemas, ...taskSchemas]) {
 	fastify.addSchema(schema);
 }
 
 fastify.register(userRoutes, { prefix: 'api/users' });
+fastify.register(taskRoutes, { prefix: 'api/tasks' });
 
 const main = async () => {
 	try {
