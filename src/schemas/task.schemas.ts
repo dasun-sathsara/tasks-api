@@ -27,7 +27,7 @@ const findTaskSchema = z
 		completed: z.boolean({ invalid_type_error: 'Completed must be a boolean' }).optional(),
 		limit: z.number({ invalid_type_error: 'Limit must be a integer' }).optional(),
 		skip: z.number({ invalid_type_error: 'Skip must be a integer' }).optional(),
-		soryBy: z.string({ invalid_type_error: 'SortBy must be a string' }).optional(),
+		sortBy: z.string({ invalid_type_error: 'SortBy must be a string' }).optional(),
 	})
 	.refine(
 		data => {
@@ -38,24 +38,27 @@ const findTaskSchema = z
 	)
 	.refine(
 		data => {
-			if (data.soryBy?.includes(':')) {
-				const [column, order] = data.soryBy.split(':');
-				return column! in ['description', 'createdAt', 'updatedAt'] && order! in ['asc', 'desc'];
+			if (data.sortBy?.includes(':')) {
+				const [column, order] = data.sortBy.split(':');
+				return ['description', 'createdAt', 'updatedAt'].includes(column!) && ['asc', 'desc'].includes(order!);
 			} else {
 				return false;
 			}
 		},
-		{ message: 'SoryBy should have the following structure: <field_name>:[asc|desc]', path: ['sortBy'] },
+		{ message: 'SortBy should have the following structure: <field_name>:[asc|desc]', path: ['sortBy'] },
 	);
 
 type AddTaskSchema = z.infer<typeof addTaskSchema>;
 type UpdateTaskSchema = z.infer<typeof updateTaskSchema>;
 
-const { schemas: taskSchemas, $ref } = buildJsonSchemas({
-	addTaskSchema,
-	taskIdSchema,
-	findTaskSchema,
-	updateTaskSchema,
-});
+const { schemas: taskSchemas, $ref } = buildJsonSchemas(
+	{
+		addTaskSchema,
+		taskIdSchema,
+		findTaskSchema,
+		updateTaskSchema,
+	},
+	{ $id: 'taskSchema' },
+);
 
-export { AddTaskSchema, UpdateTaskSchema, taskSchemas, $ref };
+export { AddTaskSchema, UpdateTaskSchema, findTaskSchema, taskSchemas, $ref };

@@ -43,11 +43,14 @@ type AddUserSchema = z.infer<typeof addUserSchema>;
 type LoginSchema = z.infer<typeof loginSchema>;
 type UpdateUserSchema = z.infer<typeof updateUserSchema>;
 
-const { schemas: userSchemas, $ref } = buildJsonSchemas({
-	addUserSchema,
-	loginSchema,
-	updateUserSchema,
-	getAvatarSchema,
-});
+const { schemas: userSchemas, $ref } = buildJsonSchemas(
+	{
+		addUserSchema,
+		loginSchema,
+		updateUserSchema,
+		getAvatarSchema,
+	},
+	{ $id: 'userSchema' },
+);
 
 export { AddUserSchema, LoginSchema, UpdateUserSchema, userSchemas, $ref };
