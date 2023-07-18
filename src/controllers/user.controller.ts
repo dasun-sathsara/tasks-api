@@ -1,6 +1,6 @@
 import { FastifyReply, FastifyRequest } from 'fastify';
 import { AddUserSchema, LoginSchema, UpdateUserSchema } from '../schemas/user.schemas';
-import { createUser } from '../services/user.servies';
+import { createUser, logout, logoutAll } from '../services/user.servies';
 import { fastify } from '../index';
 import { UserModel } from '../models/export';
 import { AuthError } from '../utils/errors';
@@ -34,12 +34,9 @@ async function loginHandler(request: FastifyRequest<{ Body: LoginSchema }>, repl
 async function logoutHandler(request: FastifyRequest, reply: FastifyReply) {
 	try {
 		const user = request.authUser!;
+		const { token } = request;
 
-		user.tokens = user.tokens.filter(token => {
-			return token.token !== request.token;
-		});
-
-		await user.save();
+		await logout(user, token!);
 	} catch (error) {
 		console.log(error);
 		reply.code(500).send({ error: 'Unknown error occured' });
@@ -49,9 +46,7 @@ async function logoutHandler(request: FastifyRequest, reply: FastifyReply) {
 async function logoutAllHandler(request: FastifyRequest, reply: FastifyReply) {
 	try {
 		const user = request.authUser!;
-		user.tokens = [];
-
-		await user.save();
+		await logoutAll(user);
 	} catch (error) {
 		console.log(error);
 		reply.code(500).send({ error: 'Unknown error occured' });
