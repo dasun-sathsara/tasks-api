@@ -8,6 +8,7 @@ import taskRoutes from './routes/task.routes';
 import authenticate from './utils/authenticate';
 import { DocumentType } from '@typegoose/typegoose';
 import { User } from './models/user.model';
+import multipart from '@fastify/multipart';
 
 const port = process.env.PORT || '3000';
 
@@ -44,6 +45,9 @@ fastify.decorate('authenticate', authenticate);
 // decorating request object
 fastify.decorateRequest('authUser', null);
 fastify.decorateRequest('token', null);
+
+// registering multipart plugin, and setting limits
+fastify.register(multipart, { limits: { files: 1, fileSize: 1000000 } });
 
 // registering routes, with prefixes
 fastify.register(userRoutes, { prefix: 'api/users' });

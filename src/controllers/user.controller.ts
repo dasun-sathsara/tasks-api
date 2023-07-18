@@ -12,6 +12,7 @@ import {
 import { fastify } from '../index';
 import { UserModel } from '../models/export';
 import { AuthError } from '../utils/errors';
+import sharp from 'sharp';
 
 async function addNewUserHandler(request: FastifyRequest<{ Body: AddUserSchema }>, reply: FastifyReply) {
 	const data = request.body;
@@ -99,12 +100,39 @@ async function deleteUserHandler(request: FastifyRequest, reply: FastifyReply) {
 	}
 }
 
-// TODO: implement multipart
-async function addAvatarHandler(request: FastifyRequest, reply: FastifyReply) {}
+async function addAvatarHandler(request: FastifyRequest, reply: FastifyReply) {
+	try {
+		const user = request.authUser!;
+
+		const parts = request.files();
+		let fileBuffer;
+
+		for await (const data of parts) {
+			if (!data.mimetype.startsWith('image')) {
+				reply.code(403).send({ error: 'Only image files are allowed.' });
+			}
+			fileBuffer = await data.toBuffer();
+		}
+
+		// image processing
+		fileBuffer = await sharp(fileBuffer).resize({ width: 250, height: 250 }).png().toBuffer();
+
+		user.avatar = fileBuffer;
+		await user.save();
+	} catch (error) {
+		fastify.log.error(error);
+		reply.code(500).send({ error: 'Unknown error occured' });
+	}
+}
 
 async function getOwnAvatarHandler(request: FastifyRequest, reply: FastifyReply) {
 	try {
 		const user = request.authUser!;
+
+		if (!user.avatar) {
+			reply.code(404).send({ error: 'Avatar was not found.' });
+		}
+
 		reply.header('Content-Type', 'image/png').send(user.avatar);
 	} catch (error) {
 		fastify.log.error(error);
@@ -127,7 +155,7 @@ async function getAvatarHandler(request: FastifyRequest<{ Params: { id: string }
 		const avatar = await getAvatarById(request.params.id);
 
 		if (!avatar) {
-			reply.code(404).send({ error: 'Avatar not found.' });
+			reply.code(404).send({ error: 'Avatar was not found.' });
 		}
 
 		reply.header('Content-Type', 'image/png').send(avatar);
