@@ -2,6 +2,7 @@ import { FastifyInstance } from 'fastify';
 import {
 	addAvatarHandler,
 	addNewUserHandler,
+	deleteOwnAvatarHandler,
 	deleteUserHandler,
 	getAvatarHandler,
 	getOwnAvatarHandler,
@@ -36,6 +37,8 @@ async function userRoutes(fastify: FastifyInstance) {
 	fastify.post('/me/avatar', { preHandler: [fastify.authenticate] }, addAvatarHandler);
 
 	fastify.get('/me/avatar', { preHandler: [fastify.authenticate] }, getOwnAvatarHandler);
+
+	fastify.delete('/me/avatar', { preHandler: [fastify.authenticate] }, deleteOwnAvatarHandler);
 
 	fastify.get<{ Params: { id: string } }>(
 		'/:id/avatar',

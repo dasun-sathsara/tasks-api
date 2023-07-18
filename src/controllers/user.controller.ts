@@ -1,6 +1,15 @@
 import { FastifyReply, FastifyRequest } from 'fastify';
 import { AddUserSchema, LoginSchema, UpdateUserSchema } from '../schemas/user.schemas';
-import { createUser, logout, logoutAll } from '../services/user.servies';
+import {
+	createUser,
+	deleteAvatar,
+	deleteUser,
+	findUserById,
+	getAvatarById,
+	logout,
+	logoutAll,
+	updateUser,
+} from '../services/user.servies';
 import { fastify } from '../index';
 import { UserModel } from '../models/export';
 import { AuthError } from '../utils/errors';
@@ -59,17 +68,71 @@ async function logoutAllHandler(request: FastifyRequest, reply: FastifyReply) {
 	}
 }
 
-async function getUserHandler(request: FastifyRequest, reply: FastifyReply) {}
+async function getUserHandler(request: FastifyRequest, reply: FastifyReply) {
+	try {
+		const user = request.authUser!;
+		return user;
+	} catch (error) {
+		fastify.log.error(error);
+		reply.code(500).send({ error: 'Unknown error occured' });
+	}
+}
 
-async function updateUserHandler(request: FastifyRequest<{ Body: UpdateUserSchema }>, reply: FastifyReply) {}
+async function updateUserHandler(request: FastifyRequest<{ Body: UpdateUserSchema }>, reply: FastifyReply) {
+	try {
+		const user = request.authUser!;
+		const { body } = request;
 
-async function deleteUserHandler(request: FastifyRequest, reply: FastifyReply) {}
+		return await updateUser(user, body);
+	} catch (error) {
+		fastify.log.error(error);
+		reply.code(500).send({ error: 'Unknown error occured' });
+	}
+}
 
+async function deleteUserHandler(request: FastifyRequest, reply: FastifyReply) {
+	try {
+		const user = request.authUser!;
+		return deleteUser(user);
+	} catch (error) {
+		fastify.log.error(error);
+		reply.code(500).send({ error: 'Unknown error occured' });
+	}
+}
+
+// TODO: implement multipart
 async function addAvatarHandler(request: FastifyRequest, reply: FastifyReply) {}
 
-async function getOwnAvatarHandler(request: FastifyRequest, reply: FastifyReply) {}
+async function getOwnAvatarHandler(request: FastifyRequest, reply: FastifyReply) {
+	try {
+		const user = request.authUser!;
+		reply.header('Content-Type', 'image/png').send(user.avatar);
+	} catch (error) {
+		fastify.log.error(error);
+		reply.code(500).send({ error: 'Unknown error occured' });
+	}
+}
 
-async function getAvatarHandler(request: FastifyRequest<{ Params: { id: string } }>, reply: FastifyReply) {}
+async function deleteOwnAvatarHandler(request: FastifyRequest, reply: FastifyReply) {
+	try {
+		const user = request.authUser!;
+		await deleteAvatar(user);
+	} catch (error) {
+		fastify.log.error(error);
+		reply.code(500).send({ error: 'Unknown error occured' });
+	}
+}
+
+async function getAvatarHandler(request: FastifyRequest<{ Params: { id: string } }>, reply: FastifyReply) {
+	try {
+		const avatar = await getAvatarById(request.params.id);
+
+		reply.header('Content-Type', 'image/png').send(avatar);
+	} catch (error) {
+		fastify.log.error(error);
+		reply.code(500).send({ error: 'Unknown error occured' });
+	}
+}
 
 export {
 	addNewUserHandler,
@@ -82,4 +145,5 @@ export {
 	addAvatarHandler,
 	getOwnAvatarHandler,
 	getAvatarHandler,
+	deleteOwnAvatarHandler,
 };
