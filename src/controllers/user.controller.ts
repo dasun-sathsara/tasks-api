@@ -31,9 +31,32 @@ async function loginHandler(request: FastifyRequest<{ Body: LoginSchema }>, repl
 	}
 }
 
-async function logoutHandler(request: FastifyRequest, reply: FastifyReply) {}
+async function logoutHandler(request: FastifyRequest, reply: FastifyReply) {
+	try {
+		const user = request.authUser!;
 
-async function logoutAllHandler(request: FastifyRequest, reply: FastifyReply) {}
+		user.tokens = user.tokens.filter(token => {
+			return token.token !== request.token;
+		});
+
+		await user.save();
+	} catch (error) {
+		console.log(error);
+		reply.code(500).send({ error: 'Unknown error occured' });
+	}
+}
+
+async function logoutAllHandler(request: FastifyRequest, reply: FastifyReply) {
+	try {
+		const user = request.authUser!;
+		user.tokens = [];
+
+		await user.save();
+	} catch (error) {
+		console.log(error);
+		reply.code(500).send({ error: 'Unknown error occured' });
+	}
+}
 
 async function getUserHandler(request: FastifyRequest, reply: FastifyReply) {}
 
