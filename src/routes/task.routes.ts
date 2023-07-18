@@ -1,9 +1,9 @@
 import { FastifyInstance } from 'fastify';
 import {
 	createTaskHandler,
-	deleteTaskdHandler,
-	findTasksHandler,
-	getTaskByIdHandler,
+	deleteTaskHandler,
+	filterTasksHandler,
+	getTaskHandler,
 	updateTaskHandler,
 } from '../controllers/task.controller';
 import { $ref, AddTaskSchema, UpdateTaskSchema } from '../schemas/task.schemas';
@@ -21,14 +21,14 @@ async function taskRoutes(fastify: FastifyInstance) {
 	// GET /tasks?sortBy=createdAt:desc
 	fastify.get(
 		'/',
-		{ preHandler: [fastify.authenticate], schema: { querystring: $ref('findTaskSchema') } },
-		findTasksHandler,
+		{ preHandler: [fastify.authenticate], schema: { querystring: $ref('filterTasksSchema') } },
+		filterTasksHandler,
 	);
 
 	fastify.get<{ Params: { id: string } }>(
 		'/:id',
 		{ preHandler: [fastify.authenticate], schema: { params: $ref('taskIdSchema') } },
-		getTaskByIdHandler,
+		getTaskHandler,
 	);
 
 	fastify.patch<{ Body: UpdateTaskSchema; Params: { id: string } }>(
@@ -40,7 +40,7 @@ async function taskRoutes(fastify: FastifyInstance) {
 	fastify.delete<{ Params: { id: string } }>(
 		'/:id',
 		{ preHandler: [fastify.authenticate], schema: { params: $ref('taskIdSchema') } },
-		deleteTaskdHandler,
+		deleteTaskHandler,
 	);
 }
 

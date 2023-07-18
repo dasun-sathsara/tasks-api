@@ -22,7 +22,7 @@ const taskIdSchema = z.object({
 	id: z.string({ required_error: 'ID is required', invalid_type_error: 'ID must be a string' }),
 });
 
-const findTaskSchema = z
+const filterTasksSchema = z
 	.object({
 		completed: z.boolean({ invalid_type_error: 'Completed must be a boolean' }).optional(),
 		limit: z.number({ invalid_type_error: 'Limit must be a integer' }).optional(),
@@ -41,24 +41,25 @@ const findTaskSchema = z
 			if (data.sortBy?.includes(':')) {
 				const [column, order] = data.sortBy.split(':');
 				return ['description', 'createdAt', 'updatedAt'].includes(column!) && ['asc', 'desc'].includes(order!);
-			} else {
-				return false;
 			}
+
+			return true;
 		},
 		{ message: 'SortBy should have the following structure: <field_name>:[asc|desc]', path: ['sortBy'] },
 	);
 
 type AddTaskSchema = z.infer<typeof addTaskSchema>;
 type UpdateTaskSchema = z.infer<typeof updateTaskSchema>;
+type FilterTaskSchema = z.infer<typeof filterTasksSchema>;
 
 const { schemas: taskSchemas, $ref } = buildJsonSchemas(
 	{
 		addTaskSchema,
 		taskIdSchema,
-		findTaskSchema,
+		filterTasksSchema,
 		updateTaskSchema,
 	},
 	{ $id: 'taskSchema' },
 );
 
-export { AddTaskSchema, UpdateTaskSchema, findTaskSchema, taskSchemas, $ref };
+export { AddTaskSchema, UpdateTaskSchema, FilterTaskSchema, filterTasksSchema, taskSchemas, $ref };

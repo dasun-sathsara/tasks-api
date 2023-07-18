@@ -20,7 +20,6 @@ class Task {
 		const { owner, __v, _id, ...rest } = taskObject;
 
 		const result = { ...rest };
-
 		result.id = _id;
 
 		return result;

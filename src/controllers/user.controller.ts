@@ -4,7 +4,6 @@ import {
 	createUser,
 	deleteAvatar,
 	deleteUser,
-	findUserById,
 	getAvatarById,
 	logout,
 	logoutAll,
@@ -126,6 +125,10 @@ async function deleteOwnAvatarHandler(request: FastifyRequest, reply: FastifyRep
 async function getAvatarHandler(request: FastifyRequest<{ Params: { id: string } }>, reply: FastifyReply) {
 	try {
 		const avatar = await getAvatarById(request.params.id);
+
+		if (!avatar) {
+			reply.code(404).send({ error: 'Avatar not found.' });
+		}
 
 		reply.header('Content-Type', 'image/png').send(avatar);
 	} catch (error) {
