@@ -1,8 +1,21 @@
 import { FastifyReply, FastifyRequest } from 'fastify';
 import { findTaskSchema, AddTaskSchema, UpdateTaskSchema } from '../schemas/task.schemas';
 import { ZodError } from 'zod';
+import { fastify } from '../index';
+import { createTask } from '../services/task.services';
 
-async function createTaskHandler(request: FastifyRequest<{ Body: AddTaskSchema }>, reply: FastifyReply) {}
+async function createTaskHandler(request: FastifyRequest<{ Body: AddTaskSchema }>, reply: FastifyReply) {
+	try {
+		const { description, completed } = request.body;
+		const { id: owner } = request.authUser!;
+
+		const task = await createTask({ description, completed, owner });
+		return task;
+	} catch (error) {
+		fastify.log.error(error);
+		reply.status(500).send({ error: 'Unknown error occured' });
+	}
+}
 
 async function findTasksHandler(request: FastifyRequest, reply: FastifyReply) {
 	try {
@@ -11,7 +24,8 @@ async function findTasksHandler(request: FastifyRequest, reply: FastifyReply) {
 		if (error instanceof ZodError) {
 			reply.status(400).send(error.flatten());
 		} else {
-			reply.status(500).send(error);
+			fastify.log.error(error);
+			reply.status(500).send({ error: 'Unknown error occured' });
 		}
 	}
 }

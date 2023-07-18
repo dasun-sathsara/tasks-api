@@ -4,16 +4,7 @@ import { DocumentType } from '@typegoose/typegoose';
 import { User } from 'src/models/user.model';
 
 async function createUser(data: AddUserSchema) {
-	try {
-		const user = await UserModel.create({ ...data });
-		return user;
-	} catch (error) {
-		if (error instanceof Error && 'code' in error && error.code === 11000) {
-			throw new Error('User already exists.');
-		} else {
-			throw new Error('Unknown error occured.');
-		}
-	}
+	return await UserModel.create(data);
 }
 
 async function logout(user: DocumentType<User>, authToken: string) {

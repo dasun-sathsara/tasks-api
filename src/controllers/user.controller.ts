@@ -12,7 +12,12 @@ async function addNewUserHandler(request: FastifyRequest<{ Body: AddUserSchema }
 		reply.code(201).send(user);
 	} catch (error) {
 		fastify.log.error(error);
-		reply.code(500).send({ error: (error as Error).message });
+
+		if (error instanceof Error && 'code' in error && error.code === 11000) {
+			reply.code(409).send({ error: 'User already exists.' });
+		} else {
+			reply.code(500).send({ error: 'User already exists.' });
+		}
 	}
 }
 
@@ -23,6 +28,7 @@ async function loginHandler(request: FastifyRequest<{ Body: LoginSchema }>, repl
 
 		return { user, token };
 	} catch (error) {
+		fastify.log.error(error);
 		if (error instanceof AuthError) {
 			reply.code(401).send({ error: error.message });
 		} else {
@@ -38,7 +44,7 @@ async function logoutHandler(request: FastifyRequest, reply: FastifyReply) {
 
 		await logout(user, token!);
 	} catch (error) {
-		console.log(error);
+		fastify.log.error(error);
 		reply.code(500).send({ error: 'Unknown error occured' });
 	}
 }
@@ -48,7 +54,7 @@ async function logoutAllHandler(request: FastifyRequest, reply: FastifyReply) {
 		const user = request.authUser!;
 		await logoutAll(user);
 	} catch (error) {
-		console.log(error);
+		fastify.log.error(error);
 		reply.code(500).send({ error: 'Unknown error occured' });
 	}
 }
