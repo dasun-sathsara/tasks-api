@@ -13,11 +13,13 @@ import { fastify } from '../index';
 import { UserModel } from '../models/export';
 import { AuthError } from '../utils/errors';
 import sharp from 'sharp';
+import { isValidObjectId } from 'mongoose';
 
 async function addNewUserHandler(request: FastifyRequest<{ Body: AddUserSchema }>, reply: FastifyReply) {
-	const data = request.body;
 	try {
+		const data = request.body;
 		const user = await createUser(data);
+
 		reply.code(201).send(user);
 	} catch (error) {
 		fastify.log.error(error);
@@ -25,7 +27,7 @@ async function addNewUserHandler(request: FastifyRequest<{ Body: AddUserSchema }
 		if (error instanceof Error && 'code' in error && error.code === 11000) {
 			reply.code(409).send({ error: 'User already exists.' });
 		} else {
-			reply.code(500).send({ error: 'User already exists.' });
+			reply.code(520).send({ error: 'Unknown error occured.' });
 		}
 	}
 }
@@ -38,10 +40,11 @@ async function loginHandler(request: FastifyRequest<{ Body: LoginSchema }>, repl
 		return { user, token };
 	} catch (error) {
 		fastify.log.error(error);
+
 		if (error instanceof AuthError) {
 			reply.code(401).send({ error: error.message });
 		} else {
-			reply.code(500).send({ error: 'Unknown error occured.' });
+			reply.code(520).send({ error: 'Unknown error occured.' });
 		}
 	}
 }
@@ -54,7 +57,7 @@ async function logoutHandler(request: FastifyRequest, reply: FastifyReply) {
 		await logout(user, token!);
 	} catch (error) {
 		fastify.log.error(error);
-		reply.code(500).send({ error: 'Unknown error occured' });
+		reply.code(520).send({ error: 'Unknown error occured' });
 	}
 }
 
@@ -64,7 +67,7 @@ async function logoutAllHandler(request: FastifyRequest, reply: FastifyReply) {
 		await logoutAll(user);
 	} catch (error) {
 		fastify.log.error(error);
-		reply.code(500).send({ error: 'Unknown error occured' });
+		reply.code(520).send({ error: 'Unknown error occured' });
 	}
 }
 
@@ -74,7 +77,7 @@ async function getUserHandler(request: FastifyRequest, reply: FastifyReply) {
 		return user;
 	} catch (error) {
 		fastify.log.error(error);
-		reply.code(500).send({ error: 'Unknown error occured' });
+		reply.code(520).send({ error: 'Unknown error occured' });
 	}
 }
 
@@ -86,7 +89,7 @@ async function updateUserHandler(request: FastifyRequest<{ Body: UpdateUserSchem
 		return await updateUser(user, body);
 	} catch (error) {
 		fastify.log.error(error);
-		reply.code(500).send({ error: 'Unknown error occured' });
+		reply.code(520).send({ error: 'Unknown error occured' });
 	}
 }
 
@@ -96,7 +99,7 @@ async function deleteUserHandler(request: FastifyRequest, reply: FastifyReply) {
 		return deleteUser(user);
 	} catch (error) {
 		fastify.log.error(error);
-		reply.code(500).send({ error: 'Unknown error occured' });
+		reply.code(520).send({ error: 'Unknown error occured' });
 	}
 }
 
@@ -109,7 +112,7 @@ async function addAvatarHandler(request: FastifyRequest, reply: FastifyReply) {
 
 		for await (const data of parts) {
 			if (!data.mimetype.startsWith('image')) {
-				reply.code(403).send({ error: 'Only image files are allowed.' });
+				return reply.code(403).send({ error: 'Only image files are allowed.' });
 			}
 			fileBuffer = await data.toBuffer();
 		}
@@ -121,7 +124,7 @@ async function addAvatarHandler(request: FastifyRequest, reply: FastifyReply) {
 		await user.save();
 	} catch (error) {
 		fastify.log.error(error);
-		reply.code(500).send({ error: 'Unknown error occured' });
+		reply.code(520).send({ error: 'Unknown error occured' });
 	}
 }
 
@@ -130,13 +133,13 @@ async function getOwnAvatarHandler(request: FastifyRequest, reply: FastifyReply)
 		const user = request.authUser!;
 
 		if (!user.avatar) {
-			reply.code(404).send({ error: 'Avatar was not found.' });
+			return reply.code(404).send({ error: 'Avatar was not found.' });
 		}
 
 		reply.header('Content-Type', 'image/png').send(user.avatar);
 	} catch (error) {
 		fastify.log.error(error);
-		reply.code(500).send({ error: 'Unknown error occured' });
+		reply.code(520).send({ error: 'Unknown error occured' });
 	}
 }
 
@@ -146,12 +149,16 @@ async function deleteOwnAvatarHandler(request: FastifyRequest, reply: FastifyRep
 		await deleteAvatar(user);
 	} catch (error) {
 		fastify.log.error(error);
-		reply.code(500).send({ error: 'Unknown error occured' });
+		reply.code(520).send({ error: 'Unknown error occured' });
 	}
 }
 
 async function getAvatarHandler(request: FastifyRequest<{ Params: { id: string } }>, reply: FastifyReply) {
 	try {
+		if (!isValidObjectId(request.params.id)) {
+			return reply.code(403).send({ error: 'Bad user ID.' });
+		}
+
 		const avatar = await getAvatarById(request.params.id);
 
 		if (!avatar) {
@@ -161,7 +168,7 @@ async function getAvatarHandler(request: FastifyRequest<{ Params: { id: string }
 		reply.header('Content-Type', 'image/png').send(avatar);
 	} catch (error) {
 		fastify.log.error(error);
-		reply.code(500).send({ error: 'Unknown error occured' });
+		reply.code(520).send({ error: 'Unknown error occured' });
 	}
 }
 

@@ -14,7 +14,7 @@ async function createTaskHandler(request: FastifyRequest<{ Body: AddTaskSchema }
 		return task;
 	} catch (error) {
 		fastify.log.error(error);
-		reply.status(500).send({ error: 'Unknown error occured' });
+		reply.status(520).send({ error: 'Unknown error occured' });
 	}
 }
 
@@ -25,11 +25,12 @@ async function filterTasksHandler(request: FastifyRequest, reply: FastifyReply) 
 
 		return await filterTasks(user, queryParams);
 	} catch (error) {
+		fastify.log.error(error);
+
 		if (error instanceof ZodError) {
-			reply.status(400).send(error.flatten());
+			reply.status(403).send(error.flatten());
 		} else {
-			fastify.log.error(error);
-			reply.status(500).send({ error: 'Unknown error occured' });
+			reply.status(520).send({ error: 'Unknown error occured' });
 		}
 	}
 }
@@ -43,7 +44,7 @@ async function updateTaskHandler(
 		const { id: taskId } = request.params;
 
 		if (!isValidObjectId(taskId)) {
-			return reply.code(403).send({ error: 'Invalid task ID.' });
+			return reply.code(403).send({ error: 'Bad task ID.' });
 		}
 
 		const task = await getTask(userId, taskId);
@@ -55,7 +56,7 @@ async function updateTaskHandler(
 		return await updateTask(taskId, request.body);
 	} catch (error) {
 		fastify.log.error(error);
-		reply.status(500).send({ error: 'Unknown error occured' });
+		reply.status(520).send({ error: 'Unknown error occured' });
 	}
 }
 
@@ -65,7 +66,7 @@ async function getTaskHandler(request: FastifyRequest<{ Params: { id: string } }
 		const { id: taskId } = request.params;
 
 		if (!isValidObjectId(taskId)) {
-			return reply.code(403).send({ error: 'Invalid task ID.' });
+			return reply.code(403).send({ error: 'Bad task ID.' });
 		}
 
 		const task = await getTask(userId, taskId);
@@ -77,7 +78,7 @@ async function getTaskHandler(request: FastifyRequest<{ Params: { id: string } }
 		return task;
 	} catch (error) {
 		fastify.log.error(error);
-		reply.status(500).send({ error: 'Unknown error occured' });
+		reply.status(520).send({ error: 'Unknown error occured' });
 	}
 }
 
@@ -87,7 +88,7 @@ async function deleteTaskHandler(request: FastifyRequest<{ Params: { id: string 
 		const { id: taskId } = request.params;
 
 		if (!isValidObjectId(taskId)) {
-			return reply.code(403).send({ error: 'Invalid task ID.' });
+			return reply.code(403).send({ error: 'Bad task ID.' });
 		}
 
 		const task = await getTask(userId, taskId);
@@ -99,7 +100,7 @@ async function deleteTaskHandler(request: FastifyRequest<{ Params: { id: string 
 		await deleteTask(request.params.id);
 	} catch (error) {
 		fastify.log.error(error);
-		reply.status(500).send({ error: 'Unknown error occured' });
+		reply.status(520).send({ error: 'Unknown error occured' });
 	}
 }
 

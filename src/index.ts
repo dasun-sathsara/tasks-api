@@ -1,4 +1,4 @@
-import Fastify, { FastifyReply, FastifyRequest } from 'fastify';
+import Fastify, { FastifyReply } from 'fastify';
 import 'dotenv/config';
 import userRoutes from './routes/user.routes';
 import { userSchemas } from './schemas/user.schemas';
@@ -68,4 +68,5 @@ const main = async () => {
 };
 
 main();
+
 export { fastify };
