@@ -3,6 +3,7 @@ import { filterTasksSchema, AddTaskSchema, UpdateTaskSchema } from '../schemas/t
 import { ZodError } from 'zod';
 import { fastify } from '../index';
 import { createTask, deleteTask, filterTasks, getTask, updateTask } from '../services/task.services';
+import { isValidObjectId } from 'mongoose';
 
 async function createTaskHandler(request: FastifyRequest<{ Body: AddTaskSchema }>, reply: FastifyReply) {
 	try {
@@ -41,10 +42,14 @@ async function updateTaskHandler(
 		const { id: userId } = request.authUser!;
 		const { id: taskId } = request.params;
 
+		if (!isValidObjectId(taskId)) {
+			return reply.code(403).send({ error: 'Invalid task ID.' });
+		}
+
 		const task = await getTask(userId, taskId);
 
 		if (!task) {
-			reply.code(404).send({ error: 'Task was not found.' });
+			return reply.code(404).send({ error: 'Task was not found.' });
 		}
 
 		return await updateTask(taskId, request.body);
@@ -59,10 +64,14 @@ async function getTaskHandler(request: FastifyRequest<{ Params: { id: string } }
 		const { id: userId } = request.authUser!;
 		const { id: taskId } = request.params;
 
+		if (!isValidObjectId(taskId)) {
+			return reply.code(403).send({ error: 'Invalid task ID.' });
+		}
+
 		const task = await getTask(userId, taskId);
 
 		if (!task) {
-			reply.code(404).send({ error: 'Task was not found.' });
+			return reply.code(404).send({ error: 'Task was not found.' });
 		}
 
 		return task;
@@ -77,10 +86,14 @@ async function deleteTaskHandler(request: FastifyRequest<{ Params: { id: string 
 		const { id: userId } = request.authUser!;
 		const { id: taskId } = request.params;
 
+		if (!isValidObjectId(taskId)) {
+			return reply.code(403).send({ error: 'Invalid task ID.' });
+		}
+
 		const task = await getTask(userId, taskId);
 
 		if (!task) {
-			reply.code(404).send({ error: 'Task was not found.' });
+			return reply.code(404).send({ error: 'Task was not found.' });
 		}
 
 		await deleteTask(request.params.id);
