@@ -23,6 +23,7 @@ for (const schema of [...userSchemas, ...taskSchemas]) {
 	fastify.addSchema(schema);
 }
 
+// registering routes, with prefixes
 fastify.register(userRoutes, { prefix: 'api/users' });
 fastify.register(taskRoutes, { prefix: 'api/tasks' });
 

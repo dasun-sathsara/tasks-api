@@ -3,6 +3,17 @@ import isEmail from 'validator/lib/isEmail';
 import * as bcrypt from 'bcrypt';
 import { Task } from './task.model';
 import { TaskModel, UserModel } from './export';
+import * as jwt from 'jsonwebtoken';
+
+// custom authentication error
+class AuthError extends Error {
+	constructor(public message: string) {
+		super(message);
+
+		// Set the prototype explicitly to preserve the instanceof check
+		Object.setPrototypeOf(this, AuthError.prototype);
+	}
+}
 
 /*
 deleting user's tasks when the user is deleted
@@ -65,8 +76,8 @@ class User {
 	})
 	public age?: number;
 
-	@prop({ type: () => [Token] })
-	public tokens?: Token[];
+	@prop({ type: () => [Token], default: [] })
+	public tokens!: Token[];
 
 	@prop({ type: () => Buffer })
 	public avatar?: Buffer;
@@ -74,8 +85,15 @@ class User {
 	@prop({ ref: () => Task, foreignField: 'owner', localField: '_id' })
 	public tasks?: Ref<Task>[];
 
-	// TODO: implement
-	public async generateAuthToken(this: DocumentType<User>) {}
+	public async generateAuthToken(this: DocumentType<User>) {
+		const user = this;
+		const token = jwt.sign({ _id: user._id.toString() }, process.env.JWT_SECRET!);
+
+		user.tokens = user.tokens.concat({ token });
+		await user.save();
+
+		return token;
+	}
 
 	// the return value of this method will be used in JSON.stringify
 	public toJSON(this: DocumentType<User>) {
@@ -95,13 +113,13 @@ class User {
 		const user = await UserModel.findOne({ email });
 
 		if (!user) {
-			throw new Error('Authentication failure.');
+			throw new AuthError('Authentication failure.');
 		}
 
 		const isMatch = await bcrypt.compare(password, user.password);
 
 		if (!isMatch) {
-			throw new Error('Authentication failure.');
+			throw new AuthError('Authentication failure.');
 		}
 
 		return user;
@@ -113,4 +131,4 @@ class Token {
 	public token!: string;
 }
 
-export { User };
+export { User, AuthError };

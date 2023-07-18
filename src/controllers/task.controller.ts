@@ -1,8 +1,9 @@
 import { FastifyReply, FastifyRequest } from 'fastify';
-import { findTaskSchema } from '../schemas/task.schemas';
+import { findTaskSchema, AddTaskSchema, UpdateTaskSchema } from '../schemas/task.schemas';
 import { ZodError } from 'zod';
 
-async function createTaskHandler(request: FastifyRequest, reply: FastifyReply) {}
+async function createTaskHandler(request: FastifyRequest<{ Body: AddTaskSchema }>, reply: FastifyReply) {}
+
 async function findTasksHandler(request: FastifyRequest, reply: FastifyReply) {
 	try {
 		const queryParams = findTaskSchema.parse(request.query);
@@ -14,8 +15,14 @@ async function findTasksHandler(request: FastifyRequest, reply: FastifyReply) {
 		}
 	}
 }
-async function getTaskByIdHandler(request: FastifyRequest, reply: FastifyReply) {}
-async function deleteTaskdHandler(request: FastifyRequest, reply: FastifyReply) {}
-async function updateTaskHandler(request: FastifyRequest, reply: FastifyReply) {}
+
+async function updateTaskHandler(
+	request: FastifyRequest<{ Params: { id: string }; Body: UpdateTaskSchema }>,
+	reply: FastifyReply,
+) {}
+
+async function getTaskByIdHandler(request: FastifyRequest<{ Params: { id: string } }>, reply: FastifyReply) {}
+
+async function deleteTaskdHandler(request: FastifyRequest<{ Params: { id: string } }>, reply: FastifyReply) {}
 
 export { createTaskHandler, findTasksHandler, getTaskByIdHandler, deleteTaskdHandler, updateTaskHandler };
