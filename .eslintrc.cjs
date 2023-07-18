@@ -70,7 +70,7 @@ module.exports = {
                 // typescript-eslint rules
                 // check https://typescript-eslint.io/rules/ for reference
                 '@typescript-eslint/array-type': 'error',
-                '@typescript-eslint/consistent-type-definitions': ['error', 'type'],
+                // '@typescript-eslint/consistent-type-definitions': ['error', 'type'],
                 '@typescript-eslint/no-unnecessary-condition': 'error',
                 '@typescript-eslint/prefer-includes': 'error',
                 '@typescript-eslint/prefer-optional-chain': 'error',

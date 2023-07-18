@@ -3,7 +3,7 @@ import { AddUserSchema, LoginSchema, UpdateUserSchema } from '../schemas/user.sc
 import { createUser } from '../services/user.servies';
 import { fastify } from '../index';
 import { UserModel } from '../models/export';
-import { AuthError } from '../models/user.model';
+import { AuthError } from '../utils/errors';
 
 async function addNewUserHandler(request: FastifyRequest<{ Body: AddUserSchema }>, reply: FastifyReply) {
 	const data = request.body;

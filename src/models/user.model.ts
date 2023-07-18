@@ -4,16 +4,7 @@ import * as bcrypt from 'bcrypt';
 import { Task } from './task.model';
 import { TaskModel, UserModel } from './export';
 import * as jwt from 'jsonwebtoken';
-
-// custom authentication error
-class AuthError extends Error {
-	constructor(public message: string) {
-		super(message);
-
-		// Set the prototype explicitly to preserve the instanceof check
-		Object.setPrototypeOf(this, AuthError.prototype);
-	}
-}
+import { AuthError } from '../utils/errors';
 
 /*
 deleting user's tasks when the user is deleted
@@ -131,4 +122,4 @@ class Token {
 	public token!: string;
 }
 
-export { User, AuthError };
+export { User };

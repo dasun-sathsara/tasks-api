@@ -1,10 +1,13 @@
-import Fastify from 'fastify';
+import Fastify, { FastifyReply, FastifyRequest } from 'fastify';
 import 'dotenv/config';
 import userRoutes from './routes/user.routes';
 import { userSchemas } from './schemas/user.schemas';
 import mongoose from 'mongoose';
 import { taskSchemas } from './schemas/task.schemas';
 import taskRoutes from './routes/task.routes';
+import authenticate from './utils/authenticate';
+import { DocumentType } from '@typegoose/typegoose';
+import { User } from './models/user.model';
 
 const port = process.env.PORT || '3000';
 
@@ -14,6 +17,18 @@ const fastify = Fastify({
 	},
 });
 
+// extending fastify types
+declare module 'fastify' {
+	export interface FastifyRequest {
+		authUser: DocumentType<User> | null;
+		token: string | null;
+	}
+
+	export interface FastifyInstance {
+		authenticate: (request: FastifyRequest, reply: FastifyReply) => Promise<void>;
+	}
+}
+
 fastify.get('/healthcheck', async () => {
 	return { status: 'OK' };
 });
@@ -22,6 +37,13 @@ fastify.get('/healthcheck', async () => {
 for (const schema of [...userSchemas, ...taskSchemas]) {
 	fastify.addSchema(schema);
 }
+
+// decorating fastify instance with authenticate function
+fastify.decorate('authenticate', authenticate);
+
+// decorating request object
+fastify.decorateRequest('authUser', null);
+fastify.decorateRequest('token', null);
 
 // registering routes, with prefixes
 fastify.register(userRoutes, { prefix: 'api/users' });
