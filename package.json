@@ -46,6 +46,7 @@
   "dependencies": {
     "@fastify/multipart": "^7.7.1",
     "@typegoose/typegoose": "^11.3.0",
+    "axios": "^1.4.0",
     "bcrypt": "^5.1.0",
     "dotenv": "^16.3.1",
     "fastify": "^4.19.2",

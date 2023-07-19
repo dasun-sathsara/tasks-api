@@ -14,7 +14,9 @@ const port = process.env.PORT || '3000';
 
 const fastify = Fastify({
 	logger: {
-		transport: { target: 'pino-pretty' },
+		enabled: true,
+		// not recommended in production
+		// transport: { target: 'pino-pretty' },
 	},
 });
 

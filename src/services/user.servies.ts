@@ -43,4 +43,12 @@ async function getAvatarById(userId: string) {
 	return (await UserModel.findById(userId))?.avatar;
 }
 
+// TODO: implement
+// @ts-ignore
+async function sendWelcomeEmail(data: { name: string; email: string }) {}
+
+// TODO: implement
+// @ts-ignore
+async function sendGoodByeEmail(data: { name: string; email: string }) {}
+
 export { createUser, logout, logoutAll, updateUser, deleteUser, deleteAvatar, getAvatarById };

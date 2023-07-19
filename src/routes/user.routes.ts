@@ -1,49 +1,37 @@
 import { FastifyInstance } from 'fastify';
-import {
-	addAvatarHandler,
-	addNewUserHandler,
-	deleteOwnAvatarHandler,
-	deleteUserHandler,
-	getAvatarHandler,
-	getOwnAvatarHandler,
-	getUserHandler,
-	loginHandler,
-	logoutAllHandler,
-	logoutHandler,
-	updateUserHandler,
-} from '../controllers/user.controller';
+import * as UserController from '../controllers/user.controller';
 import { $ref, UpdateUserSchema } from '../schemas/user.schemas';
 
 // route: api/users
 async function userRoutes(fastify: FastifyInstance) {
-	fastify.post('/', { schema: { body: $ref('addUserSchema') } }, addNewUserHandler);
+	fastify.post('/', { schema: { body: $ref('addUserSchema') } }, UserController.addNewUserHandler);
 
-	fastify.post('/login', { schema: { body: $ref('loginSchema') } }, loginHandler);
+	fastify.post('/login', { schema: { body: $ref('loginSchema') } }, UserController.loginHandler);
 
-	fastify.post('/logout', { preHandler: [fastify.authenticate] }, logoutHandler);
+	fastify.post('/logout', { preHandler: [fastify.authenticate] }, UserController.logoutHandler);
 
-	fastify.post('/logoutAll', { preHandler: [fastify.authenticate] }, logoutAllHandler);
+	fastify.post('/logoutAll', { preHandler: [fastify.authenticate] }, UserController.logoutAllHandler);
 
-	fastify.get('/me', { preHandler: [fastify.authenticate] }, getUserHandler);
+	fastify.get('/me', { preHandler: [fastify.authenticate] }, UserController.getUserHandler);
 
 	fastify.patch<{ Body: UpdateUserSchema }>(
 		'/me',
 		{ preHandler: [fastify.authenticate], schema: { body: $ref('updateUserSchema') } },
-		updateUserHandler,
+		UserController.updateUserHandler,
 	);
 
-	fastify.delete('/me', { preHandler: [fastify.authenticate] }, deleteUserHandler);
+	fastify.delete('/me', { preHandler: [fastify.authenticate] }, UserController.deleteUserHandler);
 
-	fastify.post('/me/avatar', { preHandler: [fastify.authenticate] }, addAvatarHandler);
+	fastify.post('/me/avatar', { preHandler: [fastify.authenticate] }, UserController.addAvatarHandler);
 
-	fastify.get('/me/avatar', { preHandler: [fastify.authenticate] }, getOwnAvatarHandler);
+	fastify.get('/me/avatar', { preHandler: [fastify.authenticate] }, UserController.getOwnAvatarHandler);
 
-	fastify.delete('/me/avatar', { preHandler: [fastify.authenticate] }, deleteOwnAvatarHandler);
+	fastify.delete('/me/avatar', { preHandler: [fastify.authenticate] }, UserController.deleteOwnAvatarHandler);
 
 	fastify.get<{ Params: { id: string } }>(
 		'/:id/avatar',
 		{ preHandler: [fastify.authenticate], schema: { params: $ref('getAvatarSchema') } },
-		getAvatarHandler,
+		UserController.getAvatarHandler,
 	);
 }
 

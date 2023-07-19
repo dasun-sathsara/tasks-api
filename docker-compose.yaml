@@ -21,6 +21,24 @@ services:
     volumes:
       - mongo-data:/data/db
     ports:
-      - "27017:27017"
+      - 27017:27017
     networks:
       - backend
+    restart: unless-stopped
+  api-node:
+    image: node-api
+    build:
+      context: ./
+      dockerfile: ./Dockerfile
+    init: true
+    depends_on:
+      - mongodb
+    environment:
+      - PORT=3001
+      - DATABASE_URL=mongodb://dasun:Ds20020618@mongodb:27017/tasks_api?authSource=admin
+      - JWT_SECRET=KH784HDJBD35HJLHSDJH453BJN
+    networks:
+      - backend
+    ports:
+      - 3001:3001
+    restart: unless-stopped
