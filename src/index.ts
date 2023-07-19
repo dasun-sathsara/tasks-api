@@ -1,24 +1,20 @@
-import Fastify, { FastifyReply } from 'fastify';
-import 'dotenv/config';
-import userRoutes from './routes/user.routes';
-import { userSchemas } from './schemas/user.schemas';
+import { FastifyReply } from 'fastify';
 import mongoose from 'mongoose';
-import { taskSchemas } from './schemas/task.schemas';
-import taskRoutes from './routes/task.routes';
-import authenticate from './utils/authenticate';
 import { DocumentType } from '@typegoose/typegoose';
 import { User } from './models/user.model';
-import multipart from '@fastify/multipart';
+import buildServer from './server';
+import 'dotenv/config';
 
-const port = process.env.PORT || '3000';
-
-const fastify = Fastify({
-	logger: {
+let logger;
+if (process.env.NODE_ENV === 'production') {
+	logger = {
 		enabled: true,
-		// not recommended in production
-		// transport: { target: 'pino-pretty' },
-	},
-});
+	};
+} else {
+	logger = {
+		transport: { target: 'pino-pretty' },
+	};
+}
 
 // extending fastify types
 declare module 'fastify' {
@@ -32,32 +28,11 @@ declare module 'fastify' {
 	}
 }
 
-fastify.get('/healthcheck', async () => {
-	return { status: 'OK' };
-});
-
-// registering request validation schemas
-for (const schema of [...userSchemas, ...taskSchemas]) {
-	fastify.addSchema(schema);
-}
-
-// decorating fastify instance with authenticate function
-fastify.decorate('authenticate', authenticate);
-
-// decorating request object
-fastify.decorateRequest('authUser', null);
-fastify.decorateRequest('token', null);
-
-// registering multipart plugin, and setting limits
-fastify.register(multipart, { limits: { files: 1, fileSize: 1000000 } });
-
-// registering routes, with prefixes
-fastify.register(userRoutes, { prefix: 'api/users' });
-fastify.register(taskRoutes, { prefix: 'api/tasks' });
+const fastify = buildServer({ logger });
 
 const main = async () => {
 	try {
-		await fastify.listen({ port: +port, host: '0.0.0.0' });
+		await fastify.listen({ port: +process.env.PORT!, host: '0.0.0.0' });
 
 		// try and connect to the database
 		await mongoose.connect(process.env.DATABASE_URL!, { autoIndex: true });

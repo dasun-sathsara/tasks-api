@@ -19,7 +19,8 @@
     "lint": "node tasks.mjs lint --fix",
     "lint-check": "node tasks.mjs lint",
     "start": "node tasks.mjs start",
-    "test": "node tasks.mjs test",
+    "test-node": "node tasks.mjs test",
+    "test": "tap --node-arg=--require=ts-node/register",
     "watch-node": "node tasks.mjs watch-node",
     "watch-ts": "node tasks.mjs watch-ts"
   },
@@ -30,6 +31,7 @@
     "@types/node": "^20.4.2",
     "@types/nodemon": "^1.19.2",
     "@types/shelljs": "^0.8.12",
+    "@types/tap": "^15.0.8",
     "@types/validator": "^13.7.17",
     "@typescript-eslint/eslint-plugin": "^6.0.0",
     "@typescript-eslint/parser": "^6.0.0",
@@ -41,6 +43,7 @@
     "pino-pretty": "^10.0.1",
     "prettier": "^3.0.0",
     "shelljs": "^0.8.5",
+    "ts-node": "^10.9.1",
     "typescript": "^5.1.6"
   },
   "dependencies": {
@@ -54,6 +57,7 @@
     "jsonwebtoken": "^9.0.1",
     "mongoose": "^7.3.4",
     "sharp": "^0.32.3",
+    "tap": "^16.3.7",
     "validator": "^13.9.0",
     "zod": "^3.21.4",
     "zod-to-json-schema": "^3.21.4"
